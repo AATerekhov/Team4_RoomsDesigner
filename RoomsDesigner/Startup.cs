@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RoomsDesigner.Api.Infrastructure;
 using RoomsDesigner.Api.Infrastructure.ExceptionHandling;
+using RoomsDesigner.Api.Infrastructure.HealthChecks;
 using RoomsDesigner.Api.Infrastructure.Settings;
 using RoomsDesigner.Application.Services.Implementations.Mapping;
 using RoomsDesigner.Infrastructure.EntityFramework;
@@ -34,9 +35,10 @@ namespace RoomsDesigner.Api
             services.AddApplicationDataContext(Configuration);
 			services.AddRoomDesignerServices();
 			services.AddSwaggerServices();
+            services.AddHealthChecks().AddCheck<SimpleHealphCheck>("simpleHealph", tags: ["SimpleHealphCheck"]);
 
             services.AddFluentValidationAutoValidation()
-                            .AddValidators();
+                    .AddValidators();
 
             services.AddMassTransit(configurator =>
             {
@@ -68,7 +70,12 @@ namespace RoomsDesigner.Api
 				app.UseHsts();
 			}
 
-			app.UseHttpsRedirection();
+            app.UseHealthChecks("/healph", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions()
+            {
+                Predicate = healphCheck => healphCheck.Tags.Contains("SimpleHealphCheck")
+            });
+
+            app.UseHttpsRedirection();
 
 			app.UseRouting();
 			app.UseErrorHandler();
