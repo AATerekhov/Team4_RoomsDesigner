@@ -17,7 +17,7 @@ namespace RoomsDesigner.Controllers
     /// </summary>
     [ApiController]
     [Route("api/v1/[controller]")]
-    public class CaseController(ICaseService caseService,
+    public class CasesController(ICaseService caseService,
         ILaunchService launchService,
         IMapper mapper) : ControllerBase
     {

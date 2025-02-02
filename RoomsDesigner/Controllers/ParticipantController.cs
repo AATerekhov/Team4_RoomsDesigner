@@ -17,7 +17,7 @@ namespace RoomsDesigner.Api.Controllers
     /// </summary>
     [ApiController]
     [Route("api/v1/[controller]")]
-	public class ParticipantController(IParticipantService participantService, IMapper mapper) : ControllerBase
+	public class ParticipantsController(IParticipantService participantService, IMapper mapper) : ControllerBase
     {
         [HttpGet("case/{id:guid}")]
         public async Task<IEnumerable<ParticipantShortResponse>> GetAllPersons([FromRoute]Guid id)

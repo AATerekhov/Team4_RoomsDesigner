@@ -30,19 +30,20 @@ services:
     volumes:
       - 'roomsdesigner_data:/var/lib/postgresql/data'
   
-  habit-rabbit:
-    image: rabbitmq:3-management
-    container_name: 'habit-rabbit'
-    restart: always
-    hostname: rabbitmqhost    
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-    ports:
-      - "5672:5672"
-      - "15672:15672"
+  # habit-rabbit:
+  #   image: rabbitmq:3-management
+  #   container_name: 'habit-rabbit'
+  #   restart: always
+  #   hostname: rabbitmqhost    
+  #   environment:
+  #     RABBITMQ_DEFAULT_USER: guest
+  #     RABBITMQ_DEFAULT_PASS: guest
+  #   volumes:
+  #     - rabbitmq_data:/var/lib/rabbitmq
+  #   ports:
+  #     - "5672:5672"
+  #     - "15672:15672"
+
 volumes:
   roomsdesigner_data:
   rabbitmq_data:
