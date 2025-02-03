@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace RoomsDesigner.Api.Controllers
 {
     /// <summary>
-    /// User
+    /// Participant
     /// </summary>
     [ApiController]
     [Route("api/v1/[controller]")]
