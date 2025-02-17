@@ -6,16 +6,16 @@ services:
       dockerfile: RoomsDesigner/Dockerfile      
     container_name: roomsdesigner-service
     environment:
-      "ASPNETCORE_URLS": "http://+:5100"
-      ConnectionStrings:Postgres: "Host=roomsdesigner_db;Port=5432;Database=room;UserId=postgres;Password=admin24"
+      ConnectionStrings:Postgres: "Host=roomsdesigner_db;Port=5432;Database=room;UserId=postgres;Password=admin24"      
+      ApiGateWaySettings:ValidApiKeys: ${GATEWAY_KEY_HABIT} 
       RmqSettings:Host: "habit-rabbit"
       RmqSettings:VHost: "/"
       RmqSettings:Login: "guest"
       RmqSettings:Password: "guest"
     depends_on:
       - roomsdesigner_db
-    ports:
-      - "5200:5100"
+    networks:
+      - devnet
 
   roomsdesigner_db:
     image: postgres
@@ -29,20 +29,27 @@ services:
       - "5543:5432"
     volumes:
       - 'roomsdesigner_data:/var/lib/postgresql/data'
+    networks:
+      - devnet
   
-  habit-rabbit:
-    image: rabbitmq:3-management
-    container_name: 'habit-rabbit'
-    restart: always
-    hostname: rabbitmqhost    
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-    ports:
-      - "5672:5672"
-      - "15672:15672"
+  # habit-rabbit:
+  #   image: rabbitmq:3-management
+  #   container_name: 'habit-rabbit'
+  #   restart: always
+  #   hostname: rabbitmqhost    
+  #   environment:
+  #     RABBITMQ_DEFAULT_USER: guest
+  #     RABBITMQ_DEFAULT_PASS: guest
+  #   volumes:
+  #     - rabbitmq_data:/var/lib/rabbitmq
+  #   ports:
+  #     - "5672:5672"
+  #     - "15672:15672"
 volumes:
   roomsdesigner_data:
   rabbitmq_data:
+
+networks:
+  devnet:
+    name: devnet
+    driver: bridge

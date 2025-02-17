@@ -9,8 +9,8 @@ using RoomsDesigner.Domain.Repository.Abstractions;
 namespace RoomsDesigner.Application.Services.Implementations
 {
     public class LaunchService(IParticipantRepository participanRepository,
-        ICaseRepository caseRepository,
-        IBusControl busControl) : BaseService, ILaunchService
+        ICaseRepository caseRepository
+        /*IBusControl busControl*/) : BaseService, ILaunchService
     {
         public async Task StartingCase(LaunchModel launchInfo, CancellationToken token = default)
         {
@@ -26,16 +26,16 @@ namespace RoomsDesigner.Application.Services.Implementations
                 MagazineOwnerId = caseEmtity.OwnerId,
             };
 
-            await busControl.Publish(magazineMessage, token);
+            //await busControl.Publish(magazineMessage, token);
 
-            caseEmtity.Players.ToList().ForEach(async p => {
-                await busControl.Publish(new StartDiaryMessage()
-                {
-                    RoomId = caseEmtity.Id,
-                    Description = caseEmtity.Name,
-                    DiaryOwnerId = p.Id
-                }, token);
-            });
+            //caseEmtity.Players.ToList().ForEach(async p => {
+            //    await busControl.Publish(new StartDiaryMessage()
+            //    {
+            //        RoomId = caseEmtity.Id,
+            //        Description = caseEmtity.Name,
+            //        DiaryOwnerId = p.Id
+            //    }, token);
+            //});
         }
     }
 }

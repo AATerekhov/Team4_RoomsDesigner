@@ -11,8 +11,8 @@ namespace RoomsDesigner.Application.Services.Implementations
 {
     public class ParticipantService(IParticipantRepository participanRepository,
         ICaseRepository caseRepository,
-        IMapper mapper,
-        IBusControl busControl) : BaseService, IParticipantService
+        IMapper mapper
+        /*IBusControl busControl*/) : BaseService, IParticipantService
     {
         public async Task<ParticipantModel?> AddParticipantAsync(CreateParticipantModel participantInfo, CancellationToken token = default)
         {
@@ -33,7 +33,8 @@ namespace RoomsDesigner.Application.Services.Implementations
                 CaseId = caseEntity.Id,
                 Id = participant.Id
             };
-            await busControl.Publish(message, token);
+
+            //await busControl.Publish(message, token);
 
             return mapper.Map<ParticipantModel>(participant);
         }

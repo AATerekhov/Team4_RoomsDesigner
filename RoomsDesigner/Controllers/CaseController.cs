@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RoomsDesigner.Api.Requests.Case;
@@ -22,6 +23,7 @@ namespace RoomsDesigner.Controllers
         IMapper mapper) : ControllerBase
     {
         [HttpGet]
+        [Authorize]
         public async Task<IEnumerable<CaseShortResponse>> GetAllRooms()
         {
             IEnumerable<CaseModel> rooms = await caseService.GetAllRoomsAsync(HttpContext.RequestAborted);
