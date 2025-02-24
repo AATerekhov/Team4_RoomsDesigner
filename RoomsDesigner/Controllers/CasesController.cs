@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RoomsDesigner.Api.Infrastructure.ModelBinding;
 using RoomsDesigner.Api.Requests.Case;
 using RoomsDesigner.Api.Responses.Case;
 using RoomsDesigner.Application.Models.Room;
@@ -9,6 +10,7 @@ using RoomsDesigner.Application.Service.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace RoomsDesigner.Controllers
@@ -18,7 +20,7 @@ namespace RoomsDesigner.Controllers
     /// </summary>
     [ApiController]
     [Route("api/v1/[controller]")]
-    public class CaseController(ICaseService caseService,
+    public class CasesController(ICaseService caseService,
         ILaunchService launchService,
         IMapper mapper) : ControllerBase
     {
@@ -30,6 +32,15 @@ namespace RoomsDesigner.Controllers
             return rooms.Select(mapper.Map<CaseShortResponse>);
         }
 
+        [HttpGet("owner")]
+        [Authorize]
+        public async Task<IEnumerable<CaseShortResponse>> GetRooms()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            IEnumerable<CaseModel> rooms = await caseService.GetRoomsAsync(new Guid(userId), HttpContext.RequestAborted);
+            return rooms.Select(mapper.Map<CaseShortResponse>);
+        }
+
         [HttpGet("{id:guid}")]
         public async Task<CaseDetailedResponse> GetRoomById(Guid id)
         {
@@ -38,22 +49,31 @@ namespace RoomsDesigner.Controllers
         }
 
         [HttpPost]
-        public async Task<CaseShortResponse> CreateRoom(CreateCaseRequest request)
+        [Authorize]
+        public async Task<CaseShortResponse> CreateRoom(
+            [ModelBinder(BinderType =typeof(CaseOwnerParametersBinder))]
+            CreateCaseRequest request)
         {
             var student = await caseService.AddRoomAsync(mapper.Map<CreateCaseModel>(request), HttpContext.RequestAborted);
             return mapper.Map<CaseShortResponse>(student);
         }
 
         [HttpPut]
-        public async Task UpdateRoomAsync(UpdateCaseRequest request)
+        [Authorize]
+        public async Task<bool> UpdateRoomAsync(
+            [ModelBinder(BinderType =typeof(CaseUpdateOwnerParametersBinder))]
+            UpdateCaseRequest request)
         {
-            await caseService.UpdateRoom(mapper.Map<UpdateCaseModel>(request), HttpContext.RequestAborted);
+           return await caseService.UpdateRoom(mapper.Map<UpdateCaseModel>(request), HttpContext.RequestAborted);
         }
 
         [HttpDelete("{id:guid}")]
-        public async Task DeletRoom(Guid id)
+        [Authorize]
+        public async Task<bool> DeletRoom(Guid id)
         {
-            await caseService.DeleteRoom(id, HttpContext.RequestAborted);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var result = await caseService.DeleteRoom(id, new Guid(userId), HttpContext.RequestAborted);
+            return result;
         }
 
         [HttpPost("launch")]
