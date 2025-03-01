@@ -20,12 +20,12 @@ namespace RoomsDesigner.Controllers
     /// </summary>
     [ApiController]
     [Route("api/v1/[controller]")]
+    [Authorize]
     public class CasesController(ICaseService caseService,
         ILaunchService launchService,
         IMapper mapper) : ControllerBase
     {
         [HttpGet]
-        [Authorize]
         public async Task<IEnumerable<CaseShortResponse>> GetAllRooms()
         {
             IEnumerable<CaseModel> rooms = await caseService.GetAllRoomsAsync(HttpContext.RequestAborted);
@@ -33,7 +33,6 @@ namespace RoomsDesigner.Controllers
         }
 
         [HttpGet("owner")]
-        [Authorize]
         public async Task<IEnumerable<CaseShortResponse>> GetRooms()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -44,12 +43,12 @@ namespace RoomsDesigner.Controllers
         [HttpGet("{id:guid}")]
         public async Task<CaseDetailedResponse> GetRoomById(Guid id)
         {
-            var room = await caseService.GetRoomByIdAsync(id, HttpContext.RequestAborted);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var room = await caseService.GetRoomByIdAsync(id, new Guid(userId), HttpContext.RequestAborted);            
             return mapper.Map<CaseDetailedResponse>(room);
         }
 
         [HttpPost]
-        [Authorize]
         public async Task<CaseShortResponse> CreateRoom(
             [ModelBinder(BinderType =typeof(CaseOwnerParametersBinder))]
             CreateCaseRequest request)
@@ -59,7 +58,6 @@ namespace RoomsDesigner.Controllers
         }
 
         [HttpPut]
-        [Authorize]
         public async Task<bool> UpdateRoomAsync(
             [ModelBinder(BinderType =typeof(CaseUpdateOwnerParametersBinder))]
             UpdateCaseRequest request)
@@ -68,7 +66,6 @@ namespace RoomsDesigner.Controllers
         }
 
         [HttpDelete("{id:guid}")]
-        [Authorize]
         public async Task<bool> DeletRoom(Guid id)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

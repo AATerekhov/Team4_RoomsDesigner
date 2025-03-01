@@ -31,10 +31,13 @@ namespace RoomsDesigner.Application.Services.Implementations
 
             return mapper.Map<CaseModel>(caseEntity);
         }
-        public async Task<CaseModel?> GetRoomByIdAsync(Guid id, CancellationToken token = default)
+        public async Task<CaseModel?> GetRoomByIdAsync(Guid id, Guid userId, CancellationToken token = default)
         {
             var caseEntity = await caseRepository.GetCaseByIdAsync(id, cancellationToken: token)
                 ?? throw new NotFoundException(FormatFullNotFoundErrorMessage(id, nameof(Case)));
+            if (!caseEntity.OwnerId.Equals(userId))
+                throw new ForbiddenException(FormatForbiddenErrorMessage(userId, nameof(Case)));
+             
             return mapper.Map<CaseModel>(caseEntity);
         }
 
