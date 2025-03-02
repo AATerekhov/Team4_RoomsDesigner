@@ -41,6 +41,14 @@ namespace RoomsDesigner.Application.Services.Implementations
             return mapper.Map<CaseModel>(caseEntity);
         }
 
+        public async Task<CaseModel?> GetRoomByIdAsync(Guid id , CancellationToken token = default)
+        {
+            var caseEntity = await caseRepository.GetCaseByIdAsync(id, cancellationToken: token)
+                ?? throw new NotFoundException(FormatFullNotFoundErrorMessage(id, nameof(Case)));
+
+            return mapper.Map<CaseModel>(caseEntity);
+        }
+
         public async Task<bool> DeleteRoom(Guid id, Guid Owner, CancellationToken token = default)
         {
             var caseEntity = await caseRepository.GetByIdAsync(x => x.Id.Equals(id), cancellationToken: token)
