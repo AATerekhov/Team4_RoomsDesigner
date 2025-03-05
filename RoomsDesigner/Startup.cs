@@ -59,22 +59,22 @@ namespace RoomsDesigner.Api
             services.AddFluentValidationAutoValidation()
                             .AddValidators();
 
-            //services.AddMassTransit(configurator =>
-            //{
-            //    configurator.SetKebabCaseEndpointNameFormatter();
-            //    configurator.UsingRabbitMq((context, cfg) =>
-            //    {
-            //        var rmqSettings = Configuration.Get<ApplicationSettings>()!.RmqSettings;
-            //        cfg.Host(rmqSettings.Host,
-            //                    rmqSettings.VHost,
-            //                    h =>
-            //                    {
-            //                        h.Username(rmqSettings.Login);
-            //                        h.Password(rmqSettings.Password);
-            //                    });
-            //        cfg.ConfigureEndpoints(context);
-            //    });
-            //});
+            services.AddMassTransit(configurator =>
+            {
+                configurator.SetKebabCaseEndpointNameFormatter();
+                configurator.UsingRabbitMq((context, cfg) =>
+                {
+                    var rmqSettings = Configuration.Get<ApplicationSettings>()!.RmqSettings;
+                    cfg.Host(rmqSettings.Host,
+                                rmqSettings.VHost,
+                                h =>
+                                {
+                                    h.Username(rmqSettings.Login);
+                                    h.Password(rmqSettings.Password);
+                                });
+                    cfg.ConfigureEndpoints(context);
+                });
+            });
         }
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

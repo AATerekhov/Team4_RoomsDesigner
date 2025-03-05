@@ -1,14 +1,15 @@
 ﻿using AutoMapper;
+using MassTransit;
+using RoomsDesigner.Application.Messages;
 using RoomsDesigner.Application.Models.Room;
 using RoomsDesigner.Application.Service.Abstractions;
 using RoomsDesigner.Application.Service.Abstractions.Exceptions;
 using RoomsDesigner.Domain.Entity;
 using RoomsDesigner.Domain.Repository.Abstractions;
-using static MassTransit.ValidationResultExtensions;
 
 namespace RoomsDesigner.Application.Services.Implementations
 {
-    public class СaseService(ICaseRepository caseRepository, IMapper mapper/*, IBusControl busControl*/) : BaseService, ICaseService
+    public class СaseService(ICaseRepository caseRepository, IMapper mapper, IBusControl busControl) : BaseService, ICaseService
     {
         public async Task<IEnumerable<CaseModel>> GetAllRoomsAsync(CancellationToken token = default)
         {
@@ -27,7 +28,7 @@ namespace RoomsDesigner.Application.Services.Implementations
             caseEntity = await caseRepository.AddAsync(entity: caseEntity, cancellationToken: token)
                 ?? throw new BadRequestException(FormatBadRequestErrorMessage(Guid.Empty, nameof(Case)));
 
-            //await busControl.Publish(mapper.Map<CreateRoomMessage>(caseEntity),token);
+            await busControl.Publish(mapper.Map<CreateRoomMessage>(caseEntity),token);
 
             return mapper.Map<CaseModel>(caseEntity);
         }

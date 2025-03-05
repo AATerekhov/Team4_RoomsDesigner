@@ -12,12 +12,12 @@ namespace RoomsDesigner.Application.Services.Implementations
 {
     public class ParticipantService(IParticipantRepository participanRepository,
         ICaseRepository caseRepository,
-        IMapper mapper
-        /*IBusControl busControl*/) : BaseService, IParticipantService
+        IMapper mapper,
+        IBusControl busControl) : BaseService, IParticipantService
     {
         public async Task<ParticipantModel?> AddParticipantAsync(CreateParticipantModel participantInfo, Guid userId, CancellationToken token = default)
         {
-            var caseEntity = await caseRepository.GetByIdAsync(filter: x => x.Id.Equals(participantInfo.CaseId), includes: "_players", cancellationToken: token)
+            var caseEntity = await caseRepository.GetCaseByIdAsync(participantInfo.CaseId, cancellationToken: token)
                 ?? throw new NotFoundException(FormatFullNotFoundErrorMessage(participantInfo.CaseId, nameof(Case)));
 
             if (!caseEntity.OwnerId.Equals(userId))
@@ -41,7 +41,7 @@ namespace RoomsDesigner.Application.Services.Implementations
                 Id = participant.Id
             };
 
-            //await busControl.Publish(message, token);
+            await busControl.Publish(message, token);
 
             return mapper.Map<ParticipantModel>(participant);
         }
