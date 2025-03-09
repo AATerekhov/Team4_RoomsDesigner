@@ -28,7 +28,14 @@ namespace RoomsDesigner.Application.Services.Implementations
             caseEntity = await caseRepository.AddAsync(entity: caseEntity, cancellationToken: token)
                 ?? throw new BadRequestException(FormatBadRequestErrorMessage(Guid.Empty, nameof(Case)));
 
-            await busControl.Publish(mapper.Map<CreateRoomMessage>(caseEntity),token);
+            CreateRoomMessage message = new()
+            {
+                CaseId = caseEntity.Id,
+                CaseName = caseEntity.Name,
+                OwnerId = caseEntity.OwnerId,
+                UserMail = roomInfo.UserMail
+            };
+            await busControl.Publish(message, token);
 
             return mapper.Map<CaseModel>(caseEntity);
         }

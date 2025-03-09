@@ -34,15 +34,6 @@ namespace RoomsDesigner.Application.Services.Implementations
             participant = await participanRepository.AddAsync(participant, cancellationToken: token)
                 ?? throw new BadRequestException(FormatBadRequestErrorMessage(Guid.Empty, nameof(Participant)));
 
-            var message = new AddParticipantInRoomMessage()
-            {
-                UserMail = participant.UserMail,
-                CaseId = caseEntity.Id,
-                Id = participant.Id
-            };
-
-            await busControl.Publish(message, token);
-
             return mapper.Map<ParticipantModel>(participant);
         }
 
@@ -90,8 +81,20 @@ namespace RoomsDesigner.Application.Services.Implementations
                 throw new ForbiddenException(FormatForbiddenErrorMessage(participantInfo.UserId, nameof(Participant)));
 
             participant.Update(participantInfo.UserId, participantInfo.UserMail, participantInfo.Name);
-            await participanRepository.UpdateAsync(entity: participant, token);
+            var result = await participanRepository.UpdateAsync(entity: participant, token);
 
+            if (result)
+            {
+                var message = new AddParticipantInRoomMessage()
+                {
+                    PartisipantId = participantInfo.Id,
+                    UserMail = participantInfo.UserMail,
+                    OwnerId = participantInfo.UserId,
+                    CaseId = participant.Room.Id
+                };
+
+                await busControl.Publish(message, token);
+            }
             return  (mapper.Map<ParticipantModel>(participant), mapper.Map<CaseModel>(participant.Room));
         }
     }

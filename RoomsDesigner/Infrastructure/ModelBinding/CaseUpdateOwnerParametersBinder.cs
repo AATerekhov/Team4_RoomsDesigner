@@ -14,6 +14,7 @@ namespace RoomsDesigner.Api.Infrastructure.ModelBinding
         {
             if (bindingContext is null) throw new ArgumentNullException(nameof(bindingContext));
             var userId = bindingContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userMail = bindingContext.HttpContext.User.FindFirst(ClaimTypes.Email)?.Value;
 
             using (var reader = new StreamReader(bindingContext.HttpContext.Request.Body))
             {
@@ -36,6 +37,7 @@ namespace RoomsDesigner.Api.Infrastructure.ModelBinding
                 UpdateCaseRequest resultModel = new()
                 {
                     OwnerId = new Guid(userId),
+                    UserMail = userMail,
                     Name = name,
                     Id = new Guid(id)
                 };
