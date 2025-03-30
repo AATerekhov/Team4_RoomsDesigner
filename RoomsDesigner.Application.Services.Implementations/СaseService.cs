@@ -43,9 +43,9 @@ namespace RoomsDesigner.Application.Services.Implementations
         {
             var caseEntity = await caseRepository.GetCaseByIdAsync(id, cancellationToken: token)
                 ?? throw new NotFoundException(FormatFullNotFoundErrorMessage(id, nameof(Case)));
-            if (!caseEntity.OwnerId.Equals(userId))
+            if (!caseEntity.OwnerId.Equals(userId) && caseEntity.Players.Where(p => p.UserId.Equals(userId)).FirstOrDefault() is null)
                 throw new ForbiddenException(FormatForbiddenErrorMessage(userId, nameof(Case)));
-             
+
             return mapper.Map<CaseModel>(caseEntity);
         }
 
