@@ -52,7 +52,7 @@ namespace RoomsDesigner.Controllers
         public async Task<CaseShortResponse> CreateRoom(
             [ModelBinder(BinderType =typeof(CaseOwnerParametersBinder))]
             CreateCaseRequest request)
-        {
+        {            
             var room = await caseService.AddRoomAsync(mapper.Map<CreateCaseModel>(request), HttpContext.RequestAborted);
             return mapper.Map<CaseShortResponse>(room);
         }

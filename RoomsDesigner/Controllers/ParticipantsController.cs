@@ -76,11 +76,15 @@ namespace RoomsDesigner.Api.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<ParticipantShortResponse> AddParticipant([FromBody]CreateParticipantRequest request)
+        public async Task<ParticipantDetailedResponse> AddParticipant([FromBody]CreateParticipantRequest request)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var caseEntity = await caseService.GetRoomByIdAsync(request.CaseId, HttpContext.RequestAborted);
+
             var patricipant = await participantService.AddParticipantAsync(mapper.Map<CreateParticipantModel>(request), new Guid(userId), HttpContext.RequestAborted);
-            return mapper.Map<ParticipantShortResponse>(patricipant);
+            var result = mapper.Map<ParticipantDetailedResponse>(patricipant);
+            result.Case = mapper.Map<CaseShortResponse>(caseEntity);
+            return result;
         }
 
 
