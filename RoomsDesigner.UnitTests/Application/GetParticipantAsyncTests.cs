@@ -1,6 +1,5 @@
 ﻿using AutoFixture.Xunit2;
 using FluentAssertions;
-using MassTransit;
 using Moq;
 using RoomsDesigner.Application.Models.Participant;
 using RoomsDesigner.Application.Service.Abstractions.Exceptions;
@@ -52,9 +51,7 @@ namespace RoomsDesigner.UnitTests.Application
         public async Task GetParticipantAsync_AddingParticipant_NotBeNull(
             CreateParticipantModel createParticipantModel,
             Case room,
-            [Frozen] Mock<ICaseRepository> caseRepositoryMock,
-            [Frozen] Mock<IParticipantRepository> participantRepositoryMock,
-            [Frozen] Mock<IBusControl> busControlMock,         
+            [Frozen] Mock<ICaseRepository> caseRepositoryMock,   
             ParticipantService participantService
             )
         {

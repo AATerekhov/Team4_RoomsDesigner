@@ -28,7 +28,7 @@ namespace RoomsDesigner.Api.Infrastructure.ExceptionHandling
 			});
 		}
 
-		private static async Task HandleExceptionAsync(HttpResponse response, Exception? exception)
+		private static async Task HandleExceptionAsync(HttpResponse response, Exception exception)
 		{
 			if (exception == null)
 			{

@@ -8,8 +8,7 @@ using RoomsDesigner.Domain.Repository.Abstractions;
 
 namespace RoomsDesigner.Application.Services.Implementations
 {
-    public class LaunchService(IParticipantRepository participanRepository,
-        ICaseRepository caseRepository,
+    public class LaunchService(ICaseRepository caseRepository,
         IBusControl busControl) : BaseService, ILaunchService
     {
         public async Task StartingCase(LaunchModel launchInfo, CancellationToken token = default)

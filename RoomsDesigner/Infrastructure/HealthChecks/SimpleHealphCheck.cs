@@ -8,7 +8,7 @@ namespace RoomsDesigner.Api.Infrastructure.HealthChecks
     {
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
         {
-            return new HealthCheckResult(HealthStatus.Healthy);
+            return await Task.FromResult(new HealthCheckResult(HealthStatus.Healthy));
         }
     }
 }
