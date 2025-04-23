@@ -1,12 +1,11 @@
 ﻿using RoomsDesigner.Domain.Entity.Base;
-using System.Xml.Linq;
 
 namespace RoomsDesigner.Domain.Entity
 {
     public class Participant : Entity<Guid>
     {
-        public string UserMail { get; private set; }
-        public string Name { get; private set; }
+        public string UserMail { get; private set; } = string.Empty;
+        public string Name { get; private set; } = string.Empty;
         public Guid UserId { get; private set; }
         public Case Room { get;}     
 
@@ -25,7 +24,7 @@ namespace RoomsDesigner.Domain.Entity
 
         protected Participant() : base(Guid.NewGuid())
         {
-
+            Room = new Case(Guid.Empty,string.Empty,Guid.Empty);
         }
         public void Update(Guid userId, string userMail, string name) 
         {
